@@ -1,10 +1,3 @@
-const testInput = [
-'1abc2',
-'pqr3stu8vwx',
-'a1b2c3d4e5f',
-'treb7uchet',
-];
-
 const realInput = [
 'nqninenmvnpsz874',
 '8twofpmpxkvvdnpdnlpkhseven4ncgkb',
@@ -1008,16 +1001,98 @@ const realInput = [
 'nineninekfp49',
 ]
 
-const run = (input) => {
-  const result = input.map((str) => {
-    const matches = str.match(/\d/g);
-    const first = matches[0];
-    const last = matches[matches.length - 1];
-    return parseInt(`${first}${last}`);
-  });
-  console.log(result);
-  return result;
+// const testInput = [
+// '1abc2',
+// 'pqr3stu8vwx',
+// 'a1b2c3d4e5f',
+// 'treb7uchet',
+// ];
+
+
+// const partA = (input) => {
+//   const result = input.map((str) => {
+//     const integers = str.match(/\d/g);
+//     const first = integers[0];
+//     const last = integers[integers.length - 1];
+    
+//     return parseInt(`${first}${last}`);
+//   });
+//   console.log(result);
+//   return result;
+// }
+
+// const rows = partA(realInput);
+// console.log(rows.reduce((a, b) => a + b, 0))
+
+const summarize = (numbers) => numbers.reduce((a, b) => a + b, 0);
+const getFirstAndLast = (numbers) => [numbers[0], numbers[numbers.length - 1]];
+const pairNumbers = ([first, last]) => parseInt(`${first}${last}`);
+
+const testInputB = [
+  'two1nine',
+  'eightwothree',
+  'abcone2threexyz',
+  'xtwone3four',
+  '4nineeightseven2',
+  'zoneight234',
+  '7pqrstsixteen',
+]
+
+const numberStrings = {
+  'one': 1,
+  'two': 2,
+  'three': 3,
+  'four': 4,
+  'five': 5,
+  'six': 6,
+  'seven': 7,
+  'eight': 8,
+  'nine': 9,
 }
 
-const rows = run(realInput);
-console.log(rows.reduce((a, b) => a + b, 0))
+const limitedInput = [
+  'tfphzkcxh3twofour9oneightg'
+]
+
+const partB = (input) => {
+  const calibrationValues = input.map(row => {
+    const numbersInRow = findMatchNumberString(row, []);
+    const firstAndLast = getFirstAndLast(numbersInRow);
+    const finalNumber = pairNumbers(firstAndLast);
+    return finalNumber;
+  })
+
+  console.log(calibrationValues);
+  const sumOfCalibrationValues = summarize(calibrationValues);
+  return sumOfCalibrationValues;
+}
+
+const findMatchNumberString = (input, matchingNumbers) => {
+  if (!input.length) {
+    return matchingNumbers;
+  }
+  const integerMatch = input.match(/^\d/);
+  if (integerMatch) {
+    return findMatchNumberString(
+      input.slice(1),
+      [
+        ...matchingNumbers,
+        parseInt(integerMatch[0])
+      ]
+    );
+  }
+  const matchingNumberString = Object
+    .keys(numberStrings)
+    .find((key) => input.startsWith(key));
+  if (matchingNumberString) {
+    return findMatchNumberString(
+      input.slice(1),
+      [
+        ...matchingNumbers,
+        numberStrings[matchingNumberString],
+      ]);
+  }
+  return findMatchNumberString(input.slice(1), matchingNumbers);
+};
+
+console.log(partB(realInput));
